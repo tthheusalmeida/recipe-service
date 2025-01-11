@@ -1,0 +1,26 @@
+{
+  "name": "recipe-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.ts",
+    "build": "rimraf ./dist && tsc",
+    "start": "node ./dist/index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matheus H S Almeida",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "rimraf": "^6.0.1"
+  }
+}
