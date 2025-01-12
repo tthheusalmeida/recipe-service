@@ -6,6 +6,7 @@ class Server {
   private app: Express = express();
 
   constructor() {
+    this.app.use(express.json());
     this.app.use(router);
   }
 
