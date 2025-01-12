@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { test } from "../handlers/test";
+import { getRecipe, createRecipe } from "../handlers/recipe";
 
 const router = Router();
 
-router.get("/", test);
+router.get("/recipe", getRecipe);
+
+router.post("/recipe", createRecipe);
 
 export default router;
