@@ -14,6 +14,20 @@ export async function getRecipe(req: Request, res: Response) {
   }
 }
 
+export async function getRecipeRecent(req: Request, res: Response) {
+  try {
+    const { limit } = req.body;
+
+    const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(limit);
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.log("❌ Error: ", error);
+
+    res.status(500).json({ error: "Is there something wrong!" });
+  }
+}
+
 export async function createRecipe(req: Request, res: Response) {
   if (!req.body) {
     res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST);
