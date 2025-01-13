@@ -6,7 +6,12 @@ export async function getRecipe(req: Request, res: Response) {
   try {
     const recipes = await Recipe.find();
 
-    res.status(200).json(recipes);
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      recipes,
+    };
+
+    res.status(200).json(jsonResult);
   } catch (error) {
     console.log("❌ Error: ", error);
 
@@ -20,7 +25,12 @@ export async function getRecipeRecent(req: Request, res: Response) {
 
     const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(limit);
 
-    res.status(200).json(recipes);
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      recipes,
+    };
+
+    res.status(200).json(jsonResult);
   } catch (error) {
     console.log("❌ Error: ", error);
 
@@ -52,11 +62,62 @@ export async function getRecipeFilter(
 
     const recipes = await Recipe.find(query);
 
-    res.status(200).json(recipes);
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      recipes,
+    };
+
+    res.status(200).json(jsonResult);
   } catch (error) {
     console.error("❌ Error on filter:", error);
 
     res.status(500).json({ error: "Is there something wrong with filter!" });
+  }
+}
+
+export async function updateRecipe(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res
+        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
+        .json({ error: "Missing recipe [id]" });
+    }
+    if (!req.body) {
+      res
+        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
+        .json({ error: "Missing data for update recipe" });
+    }
+
+    const currentRecipe: any = await Recipe.findById(id);
+
+    if (!currentRecipe) {
+      res
+        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
+        .json({ error: `Recipe [${id}] not found` });
+    }
+
+    Object.keys(req.body).forEach((key) => {
+      if (Array.isArray(req.body[key])) {
+        currentRecipe[key] = req.body[key];
+      } else if (req.body[key] !== currentRecipe[key]) {
+        currentRecipe[key] = req.body[key];
+      }
+    });
+
+    await currentRecipe.save();
+
+    console.log("✅ Recipe updated.");
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      result: "Recipe updated",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
+  } catch (error) {
+    console.error("Erro ao atualizar a receita:", error);
+    throw error;
   }
 }
 
@@ -73,7 +134,7 @@ export async function createRecipe(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      result: "Recipe created!",
+      result: "Recipe created",
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
