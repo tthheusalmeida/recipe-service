@@ -1,29 +1,41 @@
-import { Request, Response, NextFunction } from "express-serve-static-core";
+import { Request, Response } from "express-serve-static-core";
 import { RESPONSE_STATUS_CODE } from "../utils/constants";
+import Recipe from "../models/recipe";
 
-export function getRecipe(request: Request, response: Response) {
-  response.send([
-    {
-      id: "123",
-      name: "barao de dois",
-    },
-    {
-      id: "123",
-      name: "barao de dois",
-    },
-  ]);
+export async function getRecipe(req: Request, res: Response) {
+  try {
+    const recipes = await Recipe.find();
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.log("❌ Error: ", error);
+
+    res.status(500).json({ error: "Is there something wrong!" });
+  }
 }
 
-export function createRecipe(
-  request: Request,
-  response: Response,
-  next: NextFunction
-) {
-  if (!request.body) {
-    response.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST);
+export async function createRecipe(req: Request, res: Response) {
+  if (!req.body) {
+    res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST);
   }
 
-  console.log("Body: ", request.body);
+  try {
+    const recipe = new Recipe(req.body);
+    await recipe.save();
 
-  response.sendStatus(RESPONSE_STATUS_CODE.OK);
+    console.log("✅ Recipe created.");
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      result: "Recipe created!",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
+  } catch (error) {
+    console.log("❌ Error: ", error);
+
+    res
+      .status(RESPONSE_STATUS_CODE.BAD_REQUEST)
+      .json({ error: "Is there something wrong!" });
+  }
 }

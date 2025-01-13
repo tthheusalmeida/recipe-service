@@ -1,6 +1,7 @@
+import router from "../../router";
 import express, { Express } from "express";
 import { expressConfig } from "../../config/express";
-import router from "../../router";
+import DataBase from "../../database";
 
 class Server {
   private app: Express = express();
@@ -12,6 +13,7 @@ class Server {
 
   start() {
     this.initServer();
+    this.initDataBase();
   }
 
   private initServer() {
@@ -20,6 +22,11 @@ class Server {
     });
 
     this.app;
+  }
+
+  private async initDataBase() {
+    const db = new DataBase();
+    await db.connect();
   }
 }
 
