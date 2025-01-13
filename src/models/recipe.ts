@@ -17,6 +17,7 @@ enum DIFFICULTY {
 
 interface IRecipe extends Document {
   name: string;
+  rating: number;
   images: string[];
   ingredients: string[];
   howToMake: string[];
@@ -35,6 +36,7 @@ interface IRecipe extends Document {
 const recipeSchema = new Schema<IRecipe>(
   {
     name: { type: String, required: true },
+    rating: { type: Number, required: true },
     images: { type: [String], required: true },
     ingredients: { type: [String], required: true },
     howToMake: { type: [String], required: true },

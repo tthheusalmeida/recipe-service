@@ -6,3 +6,5 @@ export const RESPONSE_STATUS_CODE = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
 };
+
+export const MAX_RATING = 5;

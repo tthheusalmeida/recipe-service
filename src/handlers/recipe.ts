@@ -1,5 +1,5 @@
 import { Request, Response } from "express-serve-static-core";
-import { RESPONSE_STATUS_CODE } from "../utils/constants";
+import { RESPONSE_STATUS_CODE, MAX_RATING } from "../utils/constants";
 import Recipe from "../models/recipe";
 
 export async function getRecipe(req: Request, res: Response) {
@@ -25,6 +25,38 @@ export async function getRecipeRecent(req: Request, res: Response) {
     console.log("❌ Error: ", error);
 
     res.status(500).json({ error: "Is there something wrong!" });
+  }
+}
+
+interface IRecipeFilter {
+  type?: string;
+  rating?: number;
+  difficulty?: string;
+}
+
+export async function getRecipeFilter(
+  req: Request<{}, {}, IRecipeFilter>,
+  res: Response
+) {
+  try {
+    const { type, rating, difficulty } = req.body;
+    const query: any = {};
+
+    if (type) {
+      query.type = type;
+    }
+    if (difficulty) {
+      query.difficulty = difficulty;
+    }
+    query.rating = { $lte: rating || MAX_RATING };
+
+    const recipes = await Recipe.find(query);
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.error("❌ Error on filter:", error);
+
+    res.status(500).json({ error: "Is there something wrong with filter!" });
   }
 }
 
