@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tthheusalmeida/recipe-service.git"
+  },
+  "engines": {
+    "node": "20.11.1",
+    "npm": "10.2.4"
+  },
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "build": "rimraf ./dist && tsc",
