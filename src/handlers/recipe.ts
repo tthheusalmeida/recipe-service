@@ -21,9 +21,11 @@ export async function getRecipe(req: Request, res: Response) {
 
 export async function getRecipeRecent(req: Request, res: Response) {
   try {
-    const { limit } = req.body;
+    const { limit } = req.query;
 
-    const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(limit);
+    const recipes = await Recipe.find()
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
