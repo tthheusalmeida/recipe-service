@@ -23,6 +23,10 @@ class Server {
     this.initDataBase();
   }
 
+  public getApp() {
+    return this.app;
+  }
+
   private initServer() {
     this.app.listen(expressConfig.port, () => {
       console.log(`Server is running... [PORT:${expressConfig.port}]`);
