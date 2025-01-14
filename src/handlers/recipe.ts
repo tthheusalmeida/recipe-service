@@ -49,7 +49,7 @@ export async function getRecipeFilter(
   res: Response
 ) {
   try {
-    const { type, rating, difficulty } = req.body;
+    const { type, rating, difficulty } = req.query;
     const query: any = {};
 
     if (type) {
