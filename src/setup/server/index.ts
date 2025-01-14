@@ -7,7 +7,7 @@ import DataBase from "../../database";
 class Server {
   private app: Express = express();
   private corsOptions: any = {
-    origin: [expressConfig.corsOriginStag, expressConfig.corsOriginProd],
+    origin: expressConfig.corsAllowedOrigins,
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   };
