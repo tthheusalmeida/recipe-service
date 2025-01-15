@@ -11,11 +11,16 @@ export async function getRecipe(req: Request, res: Response) {
       recipes,
     };
 
-    res.status(200).json(jsonResult);
+    res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
   } catch (error) {
     console.log("❌ Error: ", error);
 
-    res.status(500).json({ error: "Is there something wrong!" });
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Is there something wrong!",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
   }
 }
 
@@ -32,11 +37,16 @@ export async function getRecipeRecent(req: Request, res: Response) {
       recipes,
     };
 
-    res.status(200).json(jsonResult);
+    res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
   } catch (error) {
     console.log("❌ Error: ", error);
 
-    res.status(500).json({ error: "Is there something wrong!" });
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Is there something wrong!",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
   }
 }
 
@@ -69,11 +79,16 @@ export async function getRecipeFilter(
       recipes,
     };
 
-    res.status(200).json(jsonResult);
+    res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
   } catch (error) {
     console.error("❌ Error on filter:", error);
 
-    res.status(500).json({ error: "Is there something wrong with filter!" });
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Is there something wrong with filter!",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
   }
 }
 
@@ -81,22 +96,31 @@ export async function updateRecipe(req: Request, res: Response) {
   try {
     const { id } = req.params;
     if (!id) {
-      res
-        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
-        .json({ error: "Missing recipe [id]" });
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: "Missing recipe [id]",
+      };
+
+      res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
     }
     if (!req.body) {
-      res
-        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
-        .json({ error: "Missing data for update recipe" });
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: "Missing data for update recipe",
+      };
+
+      res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
     }
 
     const currentRecipe: any = await Recipe.findById(id);
 
     if (!currentRecipe) {
-      res
-        .sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST)
-        .json({ error: `Recipe [${id}] not found` });
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: `Recipe [${id}] not found`,
+      };
+
+      res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
     }
 
     Object.keys(req.body).forEach((key) => {
@@ -119,13 +143,25 @@ export async function updateRecipe(req: Request, res: Response) {
     res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
   } catch (error) {
     console.error("Erro ao atualizar a receita:", error);
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      result: "Error trying to update recipe",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).send(jsonResult);
     throw error;
   }
 }
 
 export async function createRecipe(req: Request, res: Response) {
   if (!req.body) {
-    res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST);
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      result: "Missing body",
+    };
+
+    res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
   }
 
   try {
@@ -143,8 +179,11 @@ export async function createRecipe(req: Request, res: Response) {
   } catch (error) {
     console.log("❌ Error: ", error);
 
-    res
-      .status(RESPONSE_STATUS_CODE.BAD_REQUEST)
-      .json({ error: "Is there something wrong!" });
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      result: "Error trying to create recipe",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
   }
 }
