@@ -55,9 +55,9 @@ export async function rateLimiterUser(
   }
 }
 
-export async function resetLoginAttempts(ip: string, email: string) {
+export async function resetLoginAttempts(ip: string) {
   try {
-    await LoginAttempt.findOneAndDelete({ ip, email });
+    await LoginAttempt.findOneAndDelete({ ip });
   } catch (error) {
     console.log("❌ Error: ", error);
   }
@@ -106,7 +106,7 @@ export async function authUser(
     };
 
     const ip = req.ip as string;
-    resetLoginAttempts(ip, email);
+    resetLoginAttempts(ip);
 
     res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
     next();
