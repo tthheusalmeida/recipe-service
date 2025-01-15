@@ -6,7 +6,7 @@ import {
   updateRecipe,
   createRecipe,
 } from "../handlers/recipe";
-import { verifyPasskey } from "../utils/authentication";
+import { verifyPasskey } from "../handlers/authentication";
 
 const router = Router();
 
