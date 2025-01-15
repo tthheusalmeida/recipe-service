@@ -6,6 +6,7 @@ import {
   updateRecipe,
   createRecipe,
 } from "../handlers/recipe";
+import { rateLimiterUser, authUser } from "../handlers/login";
 import { verifyPasskey } from "../handlers/authentication";
 
 const router = Router();
@@ -17,5 +18,6 @@ router.get("/recipe/filter", verifyPasskey, getRecipeFilter);
 router.patch("/recipe/update/:id", verifyPasskey, updateRecipe);
 
 router.post("/recipe", verifyPasskey, createRecipe);
+router.post("/login", verifyPasskey, rateLimiterUser, authUser);
 
 export default router;
