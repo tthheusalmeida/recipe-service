@@ -28,7 +28,7 @@ interface IRecipe extends Document {
     | RECIPE.TEA_TIME
     | RECIPE.DINNER
     | RECIPE.SUPPER;
-  difficulty: DIFFICULTY.EASY | DIFFICULTY.MEDIUM | DIFFICULTY.HARD;
+  difficulty?: DIFFICULTY.EASY | DIFFICULTY.MEDIUM | DIFFICULTY.HARD;
   createdAt?: Date;
   updatedAt?: Date;
 }
