@@ -26,7 +26,7 @@ export async function rateLimiterUser(
       ) {
         const jsonResult = {
           uri: `${req.baseUrl}${req.url}`,
-          error: "Too many login attempts. Please try again after 1 hour.",
+          error: "Muitas tentativas de login. Tente novamente após 1 hora.",
         };
 
         res.status(RESPONSE_STATUS_CODE.TOO_MANY_REQUEST).json(jsonResult);
@@ -68,7 +68,7 @@ export async function findUserByEmail(email: string) {
     const user = await User.findOne({ email });
     return user;
   } catch (error) {
-    console.error("User not find: ", error);
+    console.error("Usuário não encontrado: ", error);
     return null;
   }
 }
@@ -87,7 +87,7 @@ export async function authUser(
     if (!isThereUser) {
       const jsonResult = {
         uri: `${req.baseUrl}${req.url}`,
-        error: "User not found",
+        error: "Usuário não encontrado",
       };
 
       res.status(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
@@ -97,7 +97,7 @@ export async function authUser(
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      message: "Authenticated user",
+      message: "Usuário autenticado",
       user: {
         _id: user._id,
         name: user.name,

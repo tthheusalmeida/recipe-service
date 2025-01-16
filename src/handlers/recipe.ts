@@ -17,7 +17,7 @@ export async function getRecipe(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Is there something wrong!",
+      error: "Há algo errado!",
     };
 
     res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
@@ -43,7 +43,7 @@ export async function getRecipeRecent(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Is there something wrong!",
+      error: "Há algo errado!",
     };
 
     res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
@@ -85,7 +85,7 @@ export async function getRecipeFilter(
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Is there something wrong with filter!",
+      error: "Há algo errado com filtro!",
     };
 
     res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
@@ -98,7 +98,7 @@ export async function updateRecipe(req: Request, res: Response) {
     if (!id) {
       const jsonResult = {
         uri: `${req.baseUrl}${req.url}`,
-        error: "Missing recipe [id]",
+        error: "Ausência do [id] da receita.",
       };
 
       res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
@@ -106,7 +106,7 @@ export async function updateRecipe(req: Request, res: Response) {
     if (!req.body) {
       const jsonResult = {
         uri: `${req.baseUrl}${req.url}`,
-        error: "Missing data for update recipe",
+        error: "Dados ausentes para atualização da receita",
       };
 
       res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
@@ -117,7 +117,7 @@ export async function updateRecipe(req: Request, res: Response) {
     if (!currentRecipe) {
       const jsonResult = {
         uri: `${req.baseUrl}${req.url}`,
-        error: `Recipe [${id}] not found`,
+        error: `Receita [${id}] não encontrada.`,
       };
 
       res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
@@ -137,16 +137,16 @@ export async function updateRecipe(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      message: "Recipe updated",
+      message: "Receita atualizada",
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
   } catch (error) {
-    console.error("Erro ao atualizar a receita:", error);
+    console.error("Error trying to update recipe:", error);
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Error trying to update recipe",
+      error: "Erro ao atualizar a receita.",
     };
 
     res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).send(jsonResult);
@@ -158,7 +158,7 @@ export async function createRecipe(req: Request, res: Response) {
   if (!req.body) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Missing body",
+      error: "Ausência do [body]",
     };
 
     res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
@@ -172,7 +172,7 @@ export async function createRecipe(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      message: "Recipe created",
+      message: "Receita criada.",
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
@@ -181,7 +181,7 @@ export async function createRecipe(req: Request, res: Response) {
 
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      error: "Error trying to create recipe",
+      error: "Erro ao tentar criar receita.",
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
