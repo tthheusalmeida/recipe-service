@@ -17,7 +17,7 @@ router.get("/recipe/filter", verifyPasskey, getRecipeFilter);
 
 router.patch("/recipe/update/:id", verifyPasskey, updateRecipe);
 
-router.post("/recipe", verifyPasskey, createRecipe);
+router.post("/recipe/create", verifyPasskey, createRecipe);
 router.post("/login", verifyPasskey, rateLimiterUser, authUser);
 
 export default router;
