@@ -165,7 +165,7 @@ export async function createRecipe(req: Request, res: Response) {
   }
 
   try {
-    const recipe = new Recipe(req.body);
+    const recipe = new Recipe(req.body.recipe);
     await recipe.save();
 
     console.log("✅ Recipe created.");
