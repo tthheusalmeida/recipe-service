@@ -187,3 +187,49 @@ export async function createRecipe(req: Request, res: Response) {
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
   }
 }
+
+export async function deleteRecipe(req: Request, res: Response) {
+  const { id } = req.params;
+
+  if (!id) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Ausência do [id] no parâmetro",
+    };
+
+    res.sendStatus(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+
+  try {
+    const result = await Recipe.deleteOne({ _id: id });
+
+    if (result.deletedCount === 0) {
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: "Receita não encontrada.",
+      };
+      console.log("❌ Receita não encontrada.");
+
+      res.sendStatus(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
+      return;
+    }
+
+    console.log("✅ Recipe delete.");
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      message: "Receita deletada.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.OK).send(jsonResult);
+  } catch (error) {
+    console.log("❌ Error: ", error);
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Erro ao tentar deletar receita.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+}

@@ -5,6 +5,7 @@ import {
   getRecipeFilter,
   updateRecipe,
   createRecipe,
+  deleteRecipe,
 } from "../handlers/recipe";
 import { rateLimiterUser, authUser } from "../handlers/login";
 import { verifyPasskey } from "../handlers/authentication";
@@ -19,5 +20,7 @@ router.patch("/recipe/update/:id", verifyPasskey, updateRecipe);
 
 router.post("/recipe/create", verifyPasskey, createRecipe);
 router.post("/login", verifyPasskey, rateLimiterUser, authUser);
+
+router.delete("/recipe/delete/:id", verifyPasskey, deleteRecipe);
 
 export default router;
