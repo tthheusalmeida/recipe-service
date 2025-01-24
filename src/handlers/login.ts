@@ -6,6 +6,7 @@ import User from "../models/user";
 
 const MAX_ATTEMPTS = 3;
 const BLOCK_DURATION = 3600 * 1000; // 1 hour in milliseconds
+const ONE_MINUTE = 1 * 60 * 1000;
 
 export async function rateLimiterUser(
   req: Request,
@@ -104,7 +105,7 @@ export async function authUser(
     const verificationCode = generateVerificationCode();
 
     user["verificationCode"] = verificationCode;
-    user["verificationCodeExpiresAt"] = new Date(Date.now() + 1 * 60 * 1000); // 1 minute
+    user["verificationCodeExpiresAt"] = new Date(Date.now() + ONE_MINUTE); // 1 minute
 
     await sendCodeVerification(user.email, user.name, verificationCode);
     await user.save();
@@ -139,6 +140,7 @@ export async function verifyCodeVerification(
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+    return;
   }
 
   if (!user?.email) {
@@ -148,6 +150,7 @@ export async function verifyCodeVerification(
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+    return;
   }
 
   if (!user?.name) {
@@ -157,15 +160,17 @@ export async function verifyCodeVerification(
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+    return;
   }
 
-  if (!user?.code) {
+  if (!user?.verificationCode) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       error: "Falta código do usuário.",
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+    return;
   }
 
   const { email, verificationCode } = user;
@@ -180,13 +185,17 @@ export async function verifyCodeVerification(
       };
 
       res.status(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
-      next();
       return;
     }
 
+    const dateNow = new Date().getTime();
+    const codeExpiresAt = dbUser?.verificationCodeExpiresAt
+      ? new Date(dbUser?.verificationCodeExpiresAt).getTime()
+      : new Date(Date.now() + BLOCK_DURATION).getTime();
+
     if (
-      verificationCode !== dbUser?.verificationCode &&
-      (dbUser?.verificationCodeExpiresAt || new Date()) < new Date()
+      verificationCode !== dbUser?.verificationCode ||
+      dateNow > codeExpiresAt
     ) {
       const jsonResult = {
         uri: `${req.baseUrl}${req.url}`,
@@ -194,6 +203,7 @@ export async function verifyCodeVerification(
       };
 
       res.status(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
+      return;
     }
 
     const jsonResult = {
@@ -202,6 +212,7 @@ export async function verifyCodeVerification(
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
+    return;
   } catch (error) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
@@ -211,5 +222,6 @@ export async function verifyCodeVerification(
     console.log("❌ Error: ", error);
 
     res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
+    return;
   }
 }
