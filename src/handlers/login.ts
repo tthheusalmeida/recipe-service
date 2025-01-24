@@ -107,7 +107,7 @@ export async function authUser(
     user["verificationCode"] = verificationCode;
     user["verificationCodeExpiresAt"] = new Date(Date.now() + ONE_MINUTE); // 1 minute
 
-    // await sendCodeVerification(user.email, user.name, verificationCode);
+    await sendCodeVerification(user.email, user.name, verificationCode);
     await user.save();
 
     const ip = req.ip as string;
