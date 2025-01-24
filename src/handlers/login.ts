@@ -84,6 +84,7 @@ export async function authUser(
 
   try {
     const user = await findUserByEmail(email);
+    const rawUser = { ...user };
     const isThereUser = user !== null;
 
     if (!isThereUser) {
@@ -116,7 +117,7 @@ export async function authUser(
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       message: "Usuário autenticado",
-      user,
+      user: rawUser,
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
@@ -143,7 +144,7 @@ export async function verifyCodeVerification(
     return;
   }
 
-  if (!user?.email) {
+  if (!user.email) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       error: "Falta e-mail do usuário.",
@@ -153,7 +154,7 @@ export async function verifyCodeVerification(
     return;
   }
 
-  if (!user?.name) {
+  if (!user.name) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       error: "Falta nome do usuário.",
@@ -163,7 +164,7 @@ export async function verifyCodeVerification(
     return;
   }
 
-  if (!user?.verificationCode) {
+  if (!user.verificationCode) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       error: "Falta código do usuário.",
