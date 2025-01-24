@@ -84,7 +84,6 @@ export async function authUser(
 
   try {
     const user = await findUserByEmail(email);
-    const rawUser = { ...user };
     const isThereUser = user !== null;
 
     if (!isThereUser) {
@@ -117,7 +116,10 @@ export async function authUser(
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       message: "Usuário autenticado",
-      user: rawUser,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
     };
 
     res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
