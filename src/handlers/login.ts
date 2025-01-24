@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import { RESPONSE_STATUS_CODE } from "../utils/constants";
+import { sendCodeVerification } from "../utils/nodemailer";
 import LoginAttempt from "../models/attempt";
 import User from "../models/user";
 
@@ -95,23 +96,120 @@ export async function authUser(
       return;
     }
 
+    const generateVerificationCode = () => {
+      const ramdomNum = Math.floor(Math.random() * 1000000);
+      return ramdomNum.toString().padStart(6, "0");
+    };
+
+    const verificationCode = generateVerificationCode();
+
+    user["verificationCode"] = verificationCode;
+    user["verificationCodeExpiresAt"] = new Date(Date.now() + 1 * 60 * 1000); // 1 minute
+
+    await sendCodeVerification(user.email, user.name, verificationCode);
+    await user.save();
+
+    const ip = req.ip as string;
+    await resetLoginAttempts(ip);
+
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
       message: "Usuário autenticado",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user,
     };
-
-    const ip = req.ip as string;
-    resetLoginAttempts(ip);
 
     res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
     next();
   } catch (error) {
     console.log("❌ Error: ", error);
     next(error);
+  }
+}
+
+export async function verifyCodeVerification(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { user } = req.body;
+  if (!user) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Falta usuário.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+
+  if (!user?.email) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Falta e-mail do usuário.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+
+  if (!user?.name) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Falta nome do usuário.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+
+  if (!user?.code) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Falta código do usuário.",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
+  }
+
+  const { email, verificationCode } = user;
+  try {
+    const dbUser = await findUserByEmail(email);
+    const isThereUser = user !== null;
+
+    if (!isThereUser) {
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: "Usuário não encontrado",
+      };
+
+      res.status(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
+      next();
+      return;
+    }
+
+    if (
+      verificationCode !== dbUser?.verificationCode &&
+      (dbUser?.verificationCodeExpiresAt || new Date()) < new Date()
+    ) {
+      const jsonResult = {
+        uri: `${req.baseUrl}${req.url}`,
+        error: "Código inválido ou expirado.",
+      };
+
+      res.status(RESPONSE_STATUS_CODE.NOT_FOUND).json(jsonResult);
+    }
+
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      message: "Código válido!",
+    };
+
+    res.status(RESPONSE_STATUS_CODE.OK).json(jsonResult);
+  } catch (error) {
+    const jsonResult = {
+      uri: `${req.baseUrl}${req.url}`,
+      error: "Código não é válido",
+    };
+
+    console.log("❌ Error: ", error);
+
+    res.status(RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR).json(jsonResult);
   }
 }

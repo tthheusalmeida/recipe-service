@@ -7,7 +7,11 @@ import {
   createRecipe,
   deleteRecipe,
 } from "../handlers/recipe";
-import { rateLimiterUser, authUser } from "../handlers/login";
+import {
+  rateLimiterUser,
+  authUser,
+  verifyCodeVerification,
+} from "../handlers/login";
 import { verifyPasskey } from "../handlers/authentication";
 
 const router = Router();
@@ -19,7 +23,9 @@ router.get("/recipe/filter", verifyPasskey, getRecipeFilter);
 router.patch("/recipe/update/:id", verifyPasskey, updateRecipe);
 
 router.post("/recipe/create", verifyPasskey, createRecipe);
+
 router.post("/login", verifyPasskey, rateLimiterUser, authUser);
+router.post("/login/code-verification", verifyPasskey, verifyCodeVerification);
 
 router.delete("/recipe/delete/:id", verifyPasskey, deleteRecipe);
 

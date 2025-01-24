@@ -8,7 +8,7 @@ export function verifyPasskey(req: Request, res: Response, next: NextFunction) {
   if (!passkey) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      result: "Ausência do [x-passkey]!",
+      error: "Ausência do [x-passkey]!",
     };
 
     res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(jsonResult);
@@ -18,7 +18,7 @@ export function verifyPasskey(req: Request, res: Response, next: NextFunction) {
   if (passkey !== expressConfig.passkey) {
     const jsonResult = {
       uri: `${req.baseUrl}${req.url}`,
-      result: "[x-passkey] inválido!",
+      error: "[x-passkey] inválido!",
     };
 
     res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(jsonResult);
